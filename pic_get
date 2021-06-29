@@ -1,1 +1,59 @@
 
+# @Author:Ps_Y
+# -*- coding = utf-8 -*-
+# @Time : 2021-05-11 11:15
+# @File : req_pic.py
+# @Software : PyCharm
+
+import requests
+from bs4 import BeautifulSoup
+import os
+import lxml
+
+def main():
+    if not os.path.exists('./girl_pic'):
+        os.mkdir('./girl_pic/')
+
+    baseurl = "https://www.ivsky.com/tupian/shishangnvhai_t19861/"
+    head =head = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"}
+    for i in range(1,9):
+        tolurl = "index_"+str(i)+".html"  #尾部链接的网址变化
+        url = baseurl+tolurl
+        html =requests.get(url,headers=head)
+        # print(html.text)
+        soup = BeautifulSoup(html.text, 'lxml')
+        # print(soup)
+        pic_url1 = soup.find_all("div",class_="il_img")
+        # print(pic_url1[1])
+        for t in range(0,len(pic_url1)):
+            pic_url2 = pic_url1[t].find('img')
+            pic_name = pic_url2['alt']+str(t+1)
+            pic_url3 = pic_url2['src'][29:len(pic_url2['src'])]
+            # print(pic_url3)
+            pic_url ="https://img-pre.ivsky.com/img/tupian/pre/" + pic_url3
+            print(pic_name)
+            print(pic_url)
+            pic = requests.get(pic_url)
+            with open('./girl_pic/' + pic_name + '.jpg','wb') as f:
+                f.write(pic.content)
+                print("保存成功")
+
+#//img.ivsky.com/img/tupian/t/202102/16/park_da_hyun.jpg
+
+#//img-pre.ivsky.com/img/tupian/pre/202102/16/park_da_hyun.jpg
+
+#//img.ivsky.com/img/tupian/t/202102/16/piaozhengyun-011.jpg
+
+#//img-pre.ivsky.com/img/tupian/pre/202102/16/piaozhengyun-011.jpg
+
+
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    main()
